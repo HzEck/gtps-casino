@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GTPS Casino - Secure Login</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Space+Mono:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --gold: #FFD700;
+            --gold-dark: #CC9A00;
+            --purple: #6B46C1;
+            --purple-dark: #553C9A;
+            --bg-dark: #0a0118;
+            --bg-card: #1a0f2e;
+            --text: #ffffff;
+            --text-dim: #a0a0b0;
+            --green: #10b981;
+            --red: #ef4444;
+            --shadow: rgba(255, 215, 0, 0.3);
+        }
+        
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(107, 70, 193, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+            z-index: -1;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+        
+        .particle {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: var(--gold);
+            border-radius: 50%;
+            animation: float 15s linear infinite;
+            opacity: 0.3;
+            z-index: 0;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            padding: 3rem 0;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--gold), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 2s ease-in-out infinite;
+            letter-spacing: -2px;
+        }
+        
+        @keyframes glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 10px var(--gold)) drop-shadow(0 0 20px var(--purple));
+            }
+            50% {
+                filter: drop-shadow(0 0 20px var(--gold)) drop-shadow(0 0 40px var(--purple));
+            }
+        }
+        
+        .tagline {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+        
+        .auth-panel {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(107, 70, 193, 0.1) 100%);
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem auto;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.2);
+        }
+        
+        .auth-panel h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--gold);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .info-box {
+            background: rgba(107, 70, 193, 0.2);
+            border: 1px solid var(--purple);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-box h3 {
+            color: var(--gold);
+            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .info-box ol {
+            padding-left: 1.5rem;
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+        
+        .info-box li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: rgba(26, 15, 46, 0.8);
+            border: 2px solid var(--purple);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 20px var(--shadow);
+        }
+        
+        button {
+            width: 100%;
+            padding: 1.2rem 2rem;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            color: var(--text);
+        }
+        
+        .player-panel {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(107, 70, 193, 0.1) 100%);
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.2);
+        }
+        
+        .balance-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .balance-card {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--gold);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .balance-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+        
+        .balance-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--gold);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+        
+        .balance-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .game-card {
+            background: linear-gradient(135deg, var(--bg-card), rgba(107, 70, 193, 0.2));
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .game-card:hover {
+            border-color: var(--gold);
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(255, 215, 0, 0.3);
+        }
+        
+        .game-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .game-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--gold);
+        }
+        
+        .game-card p {
+            color: var(--text-dim);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .game-card .payout {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--green);
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            color: var(--green);
+            font-weight: 700;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, var(--bg-card), rgba(107, 70, 193, 0.3));
+            border: 2px solid var(--gold);
+            border-radius: 20px;
+            padding: 3rem;
+            max-width: 600px;
+            width: 90%;
+            position: relative;
+            animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 2rem;
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            padding: 0.5rem;
+            width: 40px;
+            height: 40px;
+        }
+        
+        .modal-close:hover {
+            color: var(--gold);
+            transform: rotate(90deg);
+        }
+        
+        .bet-controls {
+            margin: 2rem 0;
+        }
+        
+        .bet-input-group {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .bet-preset {
+            flex: 1;
+            min-width: 100px;
+            padding: 0.8rem;
+            background: rgba(107, 70, 193, 0.3);
+            border: 1px solid var(--purple);
+            border-radius: 8px;
+            color: var(--text);
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .bet-preset:hover, .bet-preset.active {
+            background: var(--gold);
+            color: #000;
+        }
+        
+        .game-result {
+            margin-top: 2rem;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .game-result.win {
+            background: rgba(16, 185, 129, 0.2);
+            border: 2px solid var(--green);
+        }
+        
+        .game-result.lose {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid var(--red);
+        }
+        
+        .game-result h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .game-result.win h3 { color: var(--green); }
+        .game-result.lose h3 { color: var(--red); }
+        
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .result-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            border-radius: 10px;
+        }
+        
+        .result-item label {
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+        
+        .result-item .value {
+            color: var(--gold);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(255, 215, 0, 0.3);
+            border-top: 3px solid var(--gold);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            color: var(--text);
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.3);
+            z-index: 2000;
+            animation: slideInRight 0.5s ease;
+        }
+        
+        .notification.error {
+            background: linear-gradient(135deg, var(--red), #991b1b);
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .logo { font-size: 2.5rem; }
+            .games-grid { grid-template-columns: 1fr; }
+            .balance-display { grid-template-columns: 1fr; }
+            .result-details { grid-template-columns: 1fr; }
+            .bet-input-group { flex-direction: column; }
+            .bet-preset { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <script>
+        for (let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+            document.body.appendChild(particle);
+        }
+    </script>
+    
+    <div class="container">
+        <header>
+            <h1 class="logo">🎰 GTPS CASINO</h1>
+            <p class="tagline">Secure Gaming Experience</p>
+        </header>
+        
+        <!-- Auth Section -->
+        <div id="authSection">
+            <div class="auth-panel">
+                <h2>🔐 Secure Login</h2>
+                
+                <div class="info-box">
+                    <h3>How to Login:</h3>
+                    <ol>
+                        <li>Join the game and link your Discord</li>
+                        <li>Type <strong>/casinoweb</strong> in game</li>
+                        <li>You'll receive a 6-digit code</li>
+                        <li>Enter your username and code below</li>
+                    </ol>
+                </div>
+                
+                <div class="form-group">
+                    <label>In-Game Username</label>
+                    <input type="text" id="username" placeholder="Enter your GrowID">
+                </div>
+                
+                <div class="form-group">
+                    <label>Auth Code (from /casinoweb)</label>
+                    <input type="text" id="authCode" placeholder="000000" maxlength="6">
+                </div>
+                
+                <button onclick="login()">🎮 Enter Casino</button>
+            </div>
+        </div>
+        
+        <!-- Player Section -->
+        <div id="playerSection" class="hidden">
+            <div class="player-panel">
+                <h2 style="font-family: 'Orbitron', sans-serif; margin-bottom: 1rem; text-align: center;">
+                    Welcome, <span id="playerName" style="color: var(--gold);"></span>!
+                </h2>
+                
+                <div class="balance-display">
+                    <div class="balance-card">
+                        <h3>Total Balance</h3>
+                        <div class="value" id="totalBalance">0 WL</div>
+                    </div>
+                    <div class="balance-card">
+                        <h3>Games Played</h3>
+                        <div class="value" id="gamesPlayed">0</div>
+                    </div>
+                    <div class="balance-card">
+                        <h3>Win Rate</h3>
+                        <div class="value" id="winRate">0%</div>
+                    </div>
+                    <div class="balance-card">
+                        <h3>Biggest Win</h3>
+                        <div class="value" id="biggestWin">0 WL</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <p style="color: var(--text-dim); margin-bottom: 1rem;">
+                        💡 To deposit: Use <strong>/casino</strong> command in-game
+                    </p>
+                    <button class="btn-secondary" onclick="logout()">Logout</button>
+                </div>
+            </div>
+            
+            <!-- Games Section -->
+            <h2 style="font-family: 'Orbitron', sans-serif; font-size: 2rem; text-align: center; margin: 3rem 0 2rem; color: var(--gold);">
+                Choose Your Game
+            </h2>
+            
+            <div class="games-grid">
+                <div class="game-card" onclick="openGame('coinflip')">
+                    <span class="game-icon">🎲</span>
+                    <h3>COINFLIP</h3>
+                    <p>Classic coin flip game. Fair 50/50 chance to double your bet!</p>
+                    <div class="payout">2x Payout</div>
+                </div>
+                
+                <div class="game-card" onclick="openGame('qq')">
+                    <span class="game-icon">🎯</span>
+                    <h3>QQ GAME</h3>
+                    <p>Last digit matters! Both get 0-36, highest last digit wins.</p>
+                    <div class="payout">2x Payout</div>
+                </div>
+                
+                <div class="game-card" onclick="openGame('casino')">
+                    <span class="game-icon">🎰</span>
+                    <h3>CASINO</h3>
+                    <p>Pure number battle! Both get 0-36, highest number wins.</p>
+                    <div class="payout">2x Payout</div>
+                </div>
+                
+                <div class="game-card" onclick="openGame('reme')">
+                    <span class="game-icon">💎</span>
+                    <h3>REME</h3>
+                    <p>Sum of digits wins! Hit 0, 19, or 28 for a 3x JACKPOT!</p>
+                    <div class="payout">3x Jackpot!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game Modal -->
+    <div id="gameModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeGame()">×</button>
+            <h2 id="gameTitle" style="font-family: 'Orbitron', sans-serif; color: var(--gold); text-align: center; margin-bottom: 2rem;"></h2>
+            
+            <div class="bet-controls">
+                <label>Select Your Bet</label>
+                <div class="bet-input-group">
+                    <button class="bet-preset" onclick="setBet(10)">10 WL</button>
+                    <button class="bet-preset" onclick="setBet(100)">100 WL</button>
+                    <button class="bet-preset" onclick="setBet(1000)">1K WL</button>
+                    <button class="bet-preset" onclick="setBet(10000)">10K WL</button>
+                </div>
+                <input type="number" id="betAmount" placeholder="Or enter custom amount" min="1" max="50000">
+            </div>
+            
+            <button onclick="playGame()" style="padding: 1.5rem; font-size: 1.2rem;">
+                🎮 PLAY NOW
+            </button>
+            
+            <div id="gameResultSection" class="hidden"></div>
+        </div>
+    </div>
+    
+    <script>
+        // IMPORTANT: Change YOUR_PORT_HERE to your actual server port!
+        const API_BASE = 'https://api.gtps.cloud/g-api/YOUR_PORT_HERE/casino';
+        
+        let currentPlayer = null;
+        let currentGame = null;
+        
+        // API Functions
+        async function apiCall(endpoint, method = 'GET', data = null) {
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            
+            try {
+                const response = await fetch(API_BASE + endpoint, options);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'API request failed');
+                }
+                
+                return result;
+            } catch (error) {
+                console.error('API Error:', error);
+                showNotification(error.message || 'Connection error! Check if server is running.', 'error');
+                throw error;
+            }
+        }
+        
+        // Auth Functions
+        async function login() {
+            const username = document.getElementById('username').value.trim();
+            const code = document.getElementById('authCode').value.trim();
+            
+            if (!username) {
+                showNotification('Please enter your username!', 'error');
+                return;
+            }
+            
+            if (!code || code.length !== 6) {
+                showNotification('Please enter the 6-digit code from /casinoweb', 'error');
+                return;
+            }
+            
+            try {
+                const result = await apiCall('/auth', 'POST', {
+                    username: username,
+                    code: code
+                });
+                
+                if (result.success) {
+                    currentPlayer = result;
+                    document.getElementById('playerName').textContent = result.grow_id;
+                    document.getElementById('authSection').classList.add('hidden');
+                    document.getElementById('playerSection').classList.remove('hidden');
+                    updatePlayerUI();
+                    showNotification('Welcome to GTPS Casino!', 'success');
+                }
+            } catch (error) {
+                // Error already shown in apiCall
+            }
+        }
+        
+        function logout() {
+            currentPlayer = null;
+            document.getElementById('username').value = '';
+            document.getElementById('authCode').value = '';
+            document.getElementById('authSection').classList.remove('hidden');
+            document.getElementById('playerSection').classList.add('hidden');
+            closeGame();
+            showNotification('Logged out successfully', 'success');
+        }
+        
+        async function updatePlayerUI() {
+            try {
+                const statsResult = await apiCall('/stats', 'POST', {
+                    discord_id: currentPlayer.discord_id
+                });
+                
+                if (statsResult.success) {
+                    const stats = statsResult.stats;
+                    const balance = statsResult.balance;
+                    
+                    document.getElementById('totalBalance').textContent = formatNumber(balance) + ' WL';
+                    document.getElementById('gamesPlayed').textContent = stats.games_played || 0;
+                    
+                    const winRate = stats.games_played > 0 
+                        ? ((stats.games_won / stats.games_played) * 100).toFixed(1)
+                        : 0;
+                    document.getElementById('winRate').textContent = winRate + '%';
+                    document.getElementById('biggestWin').textContent = formatNumber(stats.biggest_win || 0) + ' WL';
+                    
+                    currentPlayer.balance = balance;
+                    currentPlayer.stats = stats;
+                }
+            } catch (error) {
+                console.error('Failed to update UI:', error);
+            }
+        }
+        
+        // Game Functions
+        function openGame(game) {
+            currentGame = game;
+            const titles = {
+                coinflip: '🎲 COINFLIP',
+                qq: '🎯 QQ GAME',
+                casino: '🎰 CASINO',
+                reme: '💎 REME'
+            };
+            document.getElementById('gameTitle').textContent = titles[game];
+            document.getElementById('gameModal').classList.add('active');
+            document.getElementById('gameResultSection').classList.add('hidden');
+            document.getElementById('betAmount').value = '';
+        }
+        
+        function closeGame() {
+            document.getElementById('gameModal').classList.remove('active');
+            currentGame = null;
+        }
+        
+        function setBet(amount) {
+            document.getElementById('betAmount').value = amount;
+            document.querySelectorAll('.bet-preset').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        async function playGame() {
+            const bet = parseInt(document.getElementById('betAmount').value);
+            if (!bet || bet <= 0) {
+                showNotification('Enter a bet amount!', 'error');
+                return;
+            }
+            
+            if (bet > currentPlayer.balance) {
+                showNotification('Insufficient balance! Deposit in-game first.', 'error');
+                return;
+            }
+            
+            if (bet < 1 || bet > 50000) {
+                showNotification('Bet must be between 1 and 50,000 WL!', 'error');
+                return;
+            }
+            
+            const resultSection = document.getElementById('gameResultSection');
+            resultSection.innerHTML = '<div class="spinner"></div>';
+            resultSection.classList.remove('hidden');
+            
+            try {
+                const result = await apiCall('/play', 'POST', {
+                    discord_id: currentPlayer.discord_id,
+                    game: currentGame,
+                    bet: bet
+                });
+                
+                if (result.success) {
+                    displayGameResult(result.result);
+                    await updatePlayerUI();
+                }
+            } catch (error) {
+                resultSection.innerHTML = `<p style="color: var(--red);">Error: ${error.message}</p>`;
+            }
+        }
+        
+        function displayGameResult(result) {
+            const resultSection = document.getElementById('gameResultSection');
+            const isWin = result.won;
+            
+            let html = `
+                <div class="game-result ${isWin ? 'win' : 'lose'}">
+                    <h3>${isWin ? '🎉 YOU WIN!' : '💀 YOU LOSE!'}</h3>
+                    <div class="result-details">
+            `;
+            
+            if (result.game === 'coinflip') {
+                html += `
+                    <div class="result-item">
+                        <label>Result</label>
+                        <div class="value">${result.result}</div>
+                    </div>
+                    <div class="result-item">
+                        <label>Your Choice</label>
+                        <div class="value">${result.player_choice}</div>
+                    </div>
+                `;
+            } else if (result.game === 'qq') {
+                html += `
+                    <div class="result-item">
+                        <label>Your Number</label>
+                        <div class="value">${result.player_number} (${result.player_value})</div>
+                    </div>
+                    <div class="result-item">
+                        <label>Bot Number</label>
+                        <div class="value">${result.bot_number} (${result.bot_value})</div>
+                    </div>
+                `;
+            } else if (result.game === 'casino') {
+                html += `
+                    <div class="result-item">
+                        <label>Your Number</label>
+                        <div class="value">${result.player_number}</div>
+                    </div>
+                    <div class="result-item">
+                        <label>Bot Number</label>
+                        <div class="value">${result.bot_number}</div>
+                    </div>
+                `;
+            } else if (result.game === 'reme') {
+                html += `
+                    <div class="result-item">
+                        <label>Your Number</label>
+                        <div class="value">${result.player_number} (Sum: ${result.player_value})</div>
+                    </div>
+                    <div class="result-item">
+                        <label>Bot Number</label>
+                        <div class="value">${result.bot_number} (Sum: ${result.bot_value})</div>
+                    </div>
+                `;
+                if (result.jackpot) {
+                    html += `
+                        <div class="result-item" style="grid-column: 1 / -1;">
+                            <div class="value" style="color: var(--gold); font-size: 2rem;">
+                                🎰 JACKPOT! 3x MULTIPLIER! 🎰
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            html += `
+                    <div class="result-item">
+                        <label>Bet Amount</label>
+                        <div class="value">${formatNumber(result.bet)} WL</div>
+                    </div>
+                    <div class="result-item">
+                        <label>${isWin ? 'Won' : 'Lost'}</label>
+                        <div class="value" style="color: ${isWin ? 'var(--green)' : 'var(--red)'}">
+                            ${isWin ? '+' : '-'}${formatNumber(isWin ? result.winnings : result.bet)} WL
+                        </div>
+                    </div>
+                    <div class="result-item" style="grid-column: 1 / -1;">
+                        <label>New Balance</label>
+                        <div class="value" style="font-size: 2rem;">${formatNumber(result.new_balance)} WL</div>
+                    </div>
+                </div>
+                <button onclick="playGame()" style="margin-top: 1rem;">
+                    🎮 PLAY AGAIN
+                </button>
+            </div>
+            `;
+            
+            resultSection.innerHTML = html;
+        }
+        
+        // Utility Functions
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+        
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            if (type === 'error') {
+                notification.classList.add('error');
+            }
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 4000);
+        }
+        
+        // Enter key support
+        document.getElementById('username').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('authCode').focus();
+        });
+        
+        document.getElementById('authCode').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+        
+        document.getElementById('betAmount').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') playGame();
+        });
+        
+        // Check API on load
+        window.addEventListener('load', async () => {
+            console.log('🎰 GTPS Casino loaded!');
+            console.log('API URL:', API_BASE);
+            
+            try {
+                const info = await apiCall('', 'GET');
+                console.log('✅ API Connection successful:', info);
+            } catch (error) {
+                console.error('❌ API Connection failed!');
+                console.error('Make sure:');
+                console.error('1. Server is running');
+                console.error('2. Port number is correct in API_BASE');
+                console.error('3. casino_web_api_secure.lua is loaded');
+            }
+        });
+    </script>
+</body>
+</html>
